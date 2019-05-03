@@ -1,5 +1,5 @@
 {
-  "name": "express-boilerplate",
+  "name": "bookmark-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
