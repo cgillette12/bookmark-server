@@ -1,19 +1,18 @@
 'use strict';
 const express = require('express');
 const uuid = require('uuid/v4');
-const { isWebUri } = require('valid-url');
+const xss = require('xss');
 const logger = require('../logger');
-const store = require('../store');
-const BookmarksService = require('./bookmarks-service');
+const BookmarksService = require('./bookmark-service');
 
 const bookmarksRouter = express.Router();
 const bodyParser = express.json();
 
 const serializeBookmark = bookmark => ({
   id: bookmark.id,
-  title: bookmark.title,
+  title: xss(bookmark.title),
   url: bookmark.url,
-  description: bookmark.description,
+  description: xss(bookmark.description),
   rating: bookmark.rating,
 });
 
@@ -41,11 +40,7 @@ bookmarksRouter
       return res.status(400).send('\'rating\' must be a number between 0 and 5');
     }
 
-    if (!isWebUri(url)) {
-      logger.error(`Invalid url '${url}' supplied`);
-      return res.status(400).send('\'url\' must be a valid URL');
-    }
-
+   
     const bookmark = { id: uuid(), title, url, description, rating };
 
     BookmarksService.insertBookmark(req.app.get('db'),bookmark)
