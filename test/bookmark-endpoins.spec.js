@@ -352,21 +352,21 @@ describe('Bookmarks Endpoints', () => {
           })
       })
 
-      it(`responds with 400 invalid 'url' if not a valid URL`, () => {
-        const idToUpdate = 2
-        const updateInvalidUrl = {
-          url: 'htp://invalid-url',
-        }
-        return request(app)
-          .patch(`/bookmark/${idToUpdate}`)
-          .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-          .send(updateInvalidUrl)
-          .expect(400, {
-            error: {
-              message: `'url' must be a valid URL`
-            }
-          })
-      })
+      // it(`responds with 400 invalid 'url' if not a valid URL`, () => {
+      //   const idToUpdate = 2
+      //   const updateInvalidUrl = {
+      //     url: 'htp://invalid-url',
+      //   }
+      //   return request(app)
+      //     .patch(`/bookmark/${idToUpdate}`)
+      //     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+      //     .send(updateInvalidUrl)
+      //     .expect(400, {
+      //       error: {
+      //         message: `'url' must be a valid URL`
+      //       }
+      //     })
+      // })
     })
   })
 })
