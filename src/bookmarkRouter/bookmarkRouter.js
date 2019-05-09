@@ -17,7 +17,7 @@ const serializeBookmark = bookmark => ({
 });
 
 bookmarksRouter
-  .route('/bookmarks')
+  .route('/bookmark')
   .get((req, res,next) => {
     BookmarksService.getAllBookmarks(req.app.get('db'))
       .then(bookmarks => {
@@ -26,7 +26,7 @@ bookmarksRouter
       .catch(next);
   })
 
-  .post(bodyParser, (req, res) => {
+  .post(bodyParser, (req, res, next) => {
     console.log(req.body);
     for (const field of ['title', 'url', 'rating']) {
       if (!req.body[field]) {
@@ -49,16 +49,16 @@ bookmarksRouter
         logger.info(`Bookmark with id ${bookmark.id} created`);
         res
           .status(201)
-          .location(`http://localhost:8000/bookmarks/${bookmark.id}`)
-          .json(bookmark);
-      });
+          .location(`http://localhost:8000/bookmark/${bookmark.id}`)
+          .json(serializeBookmark(bookmark));
+      })
+      .catch(next);
   });
 
 bookmarksRouter
-  .route('/bookmarks/:bookmark_id')
-  .get((req, res, next) => {
+  .route('/bookmark/:bookmark_id')
+  .all((req, res, next) => {
     const { bookmark_id } = req.params;
-
     BookmarksService.getById(req.app.get('db'),bookmark_id)
       .then(bookmark => {
         if (!bookmark) {
@@ -67,13 +67,16 @@ bookmarksRouter
             .status(404)
             .send({
               error:{ 
-                message: 'Article doesn\'t exist'
+                message: 'bookmark doesn\'t exist'
               }
             });
         }
         res.json(bookmark);
       })
       .catch(next);
+  })
+  .get((req,res)=>{
+    res.json(serializeBookmark(res.bookmark));
   })
   .delete((req, res,next) => {
     const { bookmark_id } = req.params;
