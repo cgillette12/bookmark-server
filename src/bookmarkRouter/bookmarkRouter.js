@@ -19,7 +19,7 @@ const serializeBookmark = bookmark => ({
 bookmarksRouter
   .route('/bookmarks')
   .get((req, res,next) => {
-    BookmarksService.getAllbookmarks(req.app.get('db'))
+    BookmarksService.getAllBookmarks(req.app.get('db'))
       .then(bookmarks => {
         res.json(bookmarks.map(serializeBookmark));
       })
@@ -27,6 +27,7 @@ bookmarksRouter
   })
 
   .post(bodyParser, (req, res) => {
+    console.log(req.body);
     for (const field of ['title', 'url', 'rating']) {
       if (!req.body[field]) {
         logger.error(`${field} is required`);
@@ -58,13 +59,17 @@ bookmarksRouter
   .get((req, res, next) => {
     const { bookmark_id } = req.params;
 
-    BookmarksService.getAllbookmarks(req.app.get('db'))
+    BookmarksService.getById(req.app.get('db'),bookmark_id)
       .then(bookmark => {
         if (!bookmark) {
           logger.error(`Bookmark with id ${bookmark_id} not found.`);
           return res
             .status(404)
-            .send('Bookmark Not Found');
+            .send({
+              error:{ 
+                message: 'Article doesn\'t exist'
+              }
+            });
         }
         res.json(bookmark);
       })
